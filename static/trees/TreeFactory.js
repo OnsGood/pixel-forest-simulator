@@ -6,30 +6,30 @@ import { Tree } from "./Tree.js";
 export class TreeFactory {
     geneFactory = new GeneFactory();
 
-    startSimulation(girdDrive, maxX) {
+    startSimulation(gridDrive, maxX) {
         let treeArray = []
         for (let posX = 4; posX < maxX; posX = posX + 25) {
-            treeArray.push(this.createTree(girdDrive.height-1, posX, girdDrive));
+            treeArray.push(this.createTree(gridDrive.height-1, posX, gridDrive));
         }
         return treeArray
     }
 
-    createTree(posX, posY, girdDrive) {
-        let startCell = new Cell(posX, posY, CellType.Active, girdDrive, 0);
+    createTree(posX, posY, gridDrive) {
+        let startCell = new Cell(posX, posY, CellType.Active, gridDrive, 0);
 
-        let geneArray = this.geneFactory.createNewGeneArray(girdDrive);
+        let geneArray = this.geneFactory.createNewGeneArray();
 
-        let tree = new Tree(startCell);
+        let tree = new Tree(startCell, this.geneFactory);
         tree.setGeneArray(geneArray);
         return tree;
     }
 
-    createTreeFromSeed(seedCell, girdDrive) {
-        let startCell = new Cell(seedCell.x, seedCell.y, CellType.Active, girdDrive, seedCell.startPoint);
+    createTreeFromSeed(seedCell, gridDrive) {
+        let startCell = new Cell(seedCell.x, seedCell.y, CellType.Active, gridDrive, 0);
 
         let geneArray = this.geneFactory.createGeneArrayFromOld(seedCell.geneArray);
 
-        let tree = new Tree(startCell);
+        let tree = new Tree(startCell, this.geneFactory);
         tree.setGeneArray(geneArray);
         return tree;
     }

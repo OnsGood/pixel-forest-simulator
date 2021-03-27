@@ -3,8 +3,8 @@ import { TreeFactory } from "./trees/TreeFactory.js";
 export class EnvDrive {
     treeArray = []
 
-    constructor(girdDrive, renderType) {
-        this.girdDrive = girdDrive;
+    constructor(gridDrive, renderType) {
+        this.gridDrive = gridDrive;
         this.renderVariant = true;
         renderType.addEventListener('change', () => this.renderVariant = !this.renderVariant);
     }
@@ -15,7 +15,7 @@ export class EnvDrive {
 
     run() {
         if (Object.keys(this.treeArray).length === 0) {
-            this.treeArray = new TreeFactory().startSimulation(this.girdDrive, this.girdDrive.width - 1);
+            this.treeArray = new TreeFactory().startSimulation(this.gridDrive, this.gridDrive.width - 1);
         }
 
         let millisCycle1 = Date.now();
@@ -23,25 +23,26 @@ export class EnvDrive {
         for (let num in this.treeArray) {
             let tree = this.treeArray[num]
             if (tree) {
-
                 if (tree.isAlive()) {
                     tree.growthCycle();
                 }
             }
         }
         let millisCycle2 = Date.now();
+
         if (this.renderVariant) {
-            this.girdDrive.renderInTable();
+            this.gridDrive.renderInTable();
         } else {
-            this.girdDrive.renderMock();
+            this.gridDrive.renderMock();
         }
+
         let millisRender = Date.now();
 
         console.log("grow time - " + (millisCycle2 - millisCycle1))
         console.log("render time - " + (millisRender - millisCycle2))
         console.log("renderType = " + this.renderVariant)
 
-        setTimeout(() => this.run(), 2)
+        setTimeout(() => this.run(), 5)
     }
 
     superRun() {
@@ -56,6 +57,7 @@ export class EnvDrive {
                 if (tree.isAlive()) {
                     if (tree.cells != undefined) {
                         if (Object.keys(tree.cells).length > 0) {
+                            tree.cleanCells();
                             return true;
                         } else {
                             tree.killTree();

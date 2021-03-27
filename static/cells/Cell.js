@@ -6,14 +6,23 @@ export class Cell {
     type = ''
     tree = ''
 
-    constructor(x, y, type, girdDrive, startPoint) {
+    constructor(x, y, type, gridDrive, startPoint) {
+        let height = document.getElementById("input_height");
         this.x = x
         this.y = y
+
+        /*if (y > (height.value - 1)) {
+            this.y = (height.value - 1) - y
+        } else if (y < 0) {
+            this.y = (height.value - 1) + y
+        } else {
+            
+        }*/
         this.type = type
-        this.girdDrive = girdDrive
+        this.gridDrive = gridDrive
         this.startPoint = startPoint
 
-        this.girdDrive.addCell(this)
+        this.gridDrive.addCell(this)
         this.alive = true
     }
 
@@ -45,23 +54,20 @@ export class Cell {
 
     move(newX, newY) {
         if (this.alive) {
-            let oldX = this.x
-            let oldY = this.y
-
             this.x = newX
             this.y = newY
-
-            this.girdDrive.moveCell(this, oldX, oldY)
         }
     }
 
     remove() {
-        this.girdDrive.removeCell(this)
-        this.tree.removeCell(this)
+        this.gridDrive.removeCell(this)
+        if (this.tree) {
+            this.tree.removeCell(this)
+        }
         this.alive = false
         this.type = null
         this.tree = null
-        this.girdDrive = null
+        this.gridDrive = null
     }
 
 

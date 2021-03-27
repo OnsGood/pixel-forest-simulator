@@ -2,21 +2,18 @@ import { CellType } from "../cells/CellType.js";
 
 export class Tree {
     cells = [];
-    maxGeneIterations = 50;
-    energy = 20;
+    energy = 300;
     life = 1;
 
-    constructor(startCell) {
+    constructor(startCell, geneFactory) {
+        this.id = Date.now();
         this.addCell(startCell)
         this.alive = true
+        this.geneFactory = geneFactory
     }
 
     isAlive() {
         return this.alive;
-    }
-
-    setMaxGeneIterations(maxGeneIterations) {
-        this.maxGeneIterations = maxGeneIterations
     }
 
     setGeneArray(geneArray) {
@@ -42,39 +39,38 @@ export class Tree {
         this.life = this.life * 1.05;
         this.energy = this.energy - this.life;
         if (this.isAlive()) {
-            if (this.energy < 1 || Object.keys(this.cells).length > 200) {
-                this.alive = false;
-                this.killTree()
-            } else {
-                if (this.cells) {
+            if (this.cells) {
+                this.cells.forEach((cell) => {
 
-                    this.cells.forEach((cell) => {
+                    if (cell && cell.isAlive()) {
+                        this.energy = this.energy - 5;
+                        if (cell.getType() === CellType.Active) {
 
-                        if (cell && cell.isAlive()) {
-                            this.energy = this.energy - 5;
+                            this.geneFactory.runGene(cell, this.geneArray, cell.gridDrive)
+
                             if (cell.getType() === CellType.Active) {
-
-                                this.geneArray.run(cell, this.maxGeneIterations);
-
-                                if (cell.getType() === CellType.Active) {
-                                    cell.setType(CellType.Usual)
-                                }
+                                cell.setType(CellType.Usual)
                             }
                         }
-                    })
-                }
+                    }
+                })
             }
+
+            if (this.energy < 1) {
+                this.killTree()
+            } 
         }
     }
 
     killTree() {
+        this.alive = false;
         if (this.cells) {
             this.cells.forEach((cell) => {
                 if (cell) {
                     if (cell.getType() === CellType.Usual) {
                         cell.remove();
                     } else {
-                        if (Math.floor(Math.random() * 2) != 20) {
+                        if (Math.floor(Math.random() * 2) != 1) {
                             cell.setType(CellType.Seed);
                             cell.geneArray = this.geneArray;
                         } else {
@@ -84,7 +80,6 @@ export class Tree {
                 }
             })
         }
-        this.alive = false;
     }
 
     removeCell(cell) {
@@ -98,6 +93,16 @@ export class Tree {
                 this.killTree()
             }
         }
+    }
 
+    cleanCells() {
+        this.cells = this.cells.filter((cell) => {
+            if (cell) {
+                if (cell.isAlive()) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 }

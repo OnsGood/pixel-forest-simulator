@@ -1,5 +1,5 @@
 import { EnvDrive } from "./EnvDrive.js";
-import { GirdDrive } from "./GridDrive.js";
+import { GridDrive } from "./GridDrive.js";
 
 let canvas = document.getElementById("pixel_canvas");
 let height = document.getElementById("input_height");
@@ -17,12 +17,12 @@ sizePicker.onsubmit = function (event) {
 
 
 function makeGrid() {
-    let girdDrive = new GirdDrive(canvas, height.value, width.value, color);
-    girdDrive.initEmpty();
+    let gridDrive = new GridDrive(canvas, height.value, width.value, color);
+    gridDrive.initEmpty();
 
-    let envDrive = new EnvDrive(girdDrive, renderType);
+    let envDrive = new EnvDrive(gridDrive, renderType);
 
-    girdDrive.envDrive = envDrive;
+    gridDrive.envDrive = envDrive;
 
     envDrive.superRun();
 

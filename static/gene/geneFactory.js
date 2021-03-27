@@ -1,79 +1,187 @@
-import { GirdDrive } from "../GridDrive.js";
-import { Behaviors, Gene } from "./Gene.js";
-import { GeneArray } from "./GeneArray.js";
+import { Cell } from "../cells/Cell.js";
+import { CellType } from "../cells/CellType.js";
+
 
 export class GeneFactory {
-    maxDate1 = 50;
-    maxDate2 = 150
+    countOfGenes = 10;
+    maxValueInGene = 50;
+    mutationChance = 10;
 
-    createNewGeneArray(girdDrive) {
-        let genes = new GeneArray();
+    BEH_LEFT = 0
+    BEH_UP = 1
+    BEH_DOWN = 2
+    BEH_RIGHT = 3
+    // gene sctructure:
+    //    1
+    //  0   3   
+    //    2
+    // 0 to (countOfGenes-1) = generational genes
 
-        for (let key in Behaviors) {
-            let randomData = [this.getRandomNumber(this.maxDate1), this.getRandomNumber(this.maxDate1), this.getRandomNumber(this.maxDate2)]
-            genes.addGene(new Gene(Behaviors[key], randomData, girdDrive));
+    runGene(cell, geneArray, gridDrive) {
+        let gene = geneArray[cell.startPoint]
+
+        for (let i = 0; i < 4; i++) {
+            let behavior = gene[i]
+            if (behavior >= 0 && behavior < this.countOfGenes) {
+                this.createCell(i, behavior, cell, gridDrive);
+            } else if (behavior >= this.countOfGenes && behavior < this.maxValueInGene) {
+
+            }
         }
+    }
 
-        return genes;
+    createNewGeneArray() {
+        let geneArray = []
+        for (let i = 0; i < this.countOfGenes; i++) {
+            geneArray.push([
+                this.getRandomGeneBehavior(),
+                this.getRandomGeneBehavior(),
+                this.getRandomGeneBehavior(),
+                this.getRandomGeneBehavior()
+            ]);
+        }
+        return geneArray;
     }
 
     createGeneArrayFromOld(geneArray) {
-        let genes = new GeneArray();
+        let newGeneArray = []
+        geneArray.forEach(gene => {
+            newGeneArray.push([gene[0],gene[1],gene[2],gene[3]])
+        });
+        newGeneArray = this.mutateGeneArray(newGeneArray)
+        return newGeneArray
+    }
 
-        for (let oldGeneNum in geneArray.getGeneArr()) {
-            let oldGene = geneArray.getGeneArr()[oldGeneNum];
-            let oldData = oldGene.getData();
+    mutateGeneArray(geneArray) {
+        if (Math.floor(Math.random() * 100) < this.mutationChance) {
+            let mutatGene = Math.floor(Math.random() * (this.countOfGenes-1))
+            let gene = geneArray[mutatGene];
 
-            let newData = this.mutateGene([oldData[0], oldData[1], oldData[2]], this.maxDate1, this.maxDate2);
+            let mutatGenePart = Math.floor(Math.random() * 4)
 
-            let newGene = new Gene(oldGene.getBehavior(), newData, oldGene.girdDrive);
+            gene[mutatGenePart] = this.getRandomGeneBehavior()
+        }
+        return geneArray;
+    }
 
-            genes.addGene(newGene);
+    getRandomGeneBehavior() {
+        return Math.floor(Math.random() * this.maxValueInGene);
+    }
+
+
+
+    createCell(BEH, startPoint, cell, gridDrive) {
+        let x = null
+        let y = null
+        switch (BEH) {
+            case this.BEH_LEFT:
+                x = 0
+                y = -1
+                break;
+            case this.BEH_UP:
+                x = -1
+                y = 0
+                break;
+            case this.BEH_DOWN:
+                x = 1
+                y = 0
+                break;
+            case this.BEH_RIGHT:
+                x = 0
+                y = 1
+                break;
         }
 
-        this.mutateGeneArray(genes, genes.getGeneArr()[0].girdDrive)
-
-        return genes;
+        let newCell = new Cell(cell.x + x, cell.y + y, CellType.Active, gridDrive, startPoint);
+        cell.getTree().addCell(newCell);
+        return newCell;
     }
+}
 
-    createRandomGene(MaxNumberInData, girdDrive) {
-        let rnd = this.getRandomNumber(Object.keys(Behaviors).length);
-        let randBehavior = Object.values(Behaviors)[rnd];
 
-        let randomData = [this.getRandomNumber(MaxNumberInData), this.getRandomNumber(MaxNumberInData), this.getRandomNumber(150)]
 
-        return new Gene(randBehavior, randomData, girdDrive);
-    }
 
-    mutateGene(data, data1SIze, data2Size) {
-        let mutantiosVariant = Math.floor(Math.random() * 10);
+let Behaviors = {
+    createNewCellUp(cell, data, gridDrive) {
+        let cordX = cell.x
+        let cordY = cell.y + 1
 
-        switch (mutantiosVariant) {
-            case 1:
-                data[0] = Math.floor(Math.random() * data1SIze)
-                break;
-            case 2:
-                data[1] = Math.floor(Math.random() * data1SIze)
-                break;
-            case 3:
-                data[2] = Math.floor(Math.random() * data2Size)
-                break;
+        if (!gridDrive.isCoordsHasCell(cordX, cordY)) {
+            let newCell = new Cell(cordX, cordY, CellType.Active, gridDrive, data[1]);
+            cell.getTree().addCell(newCell);
         }
-        return data;
-    }
+        return data[0]
+    },
+    createNewCellLeft(cell, data, gridDrive) {
+        let cordX = cell.x - 1
+        let cordY = cell.y
 
-    mutateGeneArray(geneArray, girdDrive) {
-        let mutantiosType = Math.floor(Math.random() * 100);
-
-        if (mutantiosType === 1) {
-            let gene = this.createRandomGene(geneArray.length + 1, girdDrive)
-            geneArray.addGene(gene);
-        } else if (mutantiosType === 2) {
-            geneArray.getGeneArr().pop();
+        if (!gridDrive.isCoordsHasCell(cordX, cordY)) {
+            let newCell = new Cell(cordX, cordY, CellType.Active, gridDrive, data[1]);
+            cell.getTree().addCell(newCell);
         }
-    }
+        return data[0]
+    },
+    createNewCellRight(cell, data, gridDrive) {
+        let cordX = cell.x + 1
+        let cordY = cell.y
 
-    getRandomNumber(max) {
-        return Math.floor(Math.random() * max);
-    }
+        if (!gridDrive.isCoordsHasCell(cordX, cordY)) {
+            let newCell = new Cell(cordX, cordY, CellType.Active, gridDrive, data[1]);
+            cell.getTree().addCell(newCell);
+        }
+        return data[0]
+    },
+    createNewCellDown(cell, data, gridDrive) {
+        let cordX = cell.x
+        let cordY = cell.y - 1
+
+        if (!gridDrive.isCoordsHasCell(cordX, cordY)) {
+            let newCell = new Cell(cordX, cordY, CellType.Active, gridDrive, data[1]);
+            cell.getTree().addCell(newCell);
+        }
+        return data[0]
+    },
+
+    getEnergy(cell, data, gridDrive) {
+        return data[0]
+    },
+
+    getSize(cell, data, gridDrive) {
+        let size = 1;
+        if (cell.getTree() && cell.getTree().getCells()) {
+            size = cell.getTree().getCells().lenght;
+        }
+        if (size >= data[2]) {
+            return data[0]
+        } else {
+            return data[1]
+        }
+    },
+    getHeight(cell, data, gridDrive) {
+        let height = cell.x;
+        if (height >= data[2]) {
+            return data[0]
+        } else {
+            return data[1]
+        }
+    },
+    changeCellTypeToSeed(cell, data, gridDrive) {
+        cell.setType(CellType.Seed)
+        return data[0]
+    },
+    changeCellTypeToUsual(cell, data, gridDrive) {
+        cell.setType(CellType.Usual)
+        return data[0]
+    },
+    killTree(cell, data, gridDrive) {
+        if (cell.getTree()) {
+            cell.getTree().killTree()
+        }
+        return data[0]
+    },
+    killCell(cell, data, gridDrive) {
+        //cell.remove()
+        return data[0]
+    },
 }
