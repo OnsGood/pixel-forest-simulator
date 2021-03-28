@@ -3,7 +3,7 @@ import { CellType } from "../cells/CellType.js";
 export class Tree {
     cells = [];
     energy = 300;
-    life = 1;
+    life = 50;
 
     constructor(startCell, geneFactory) {
         this.id = Date.now();
@@ -36,14 +36,14 @@ export class Tree {
     }
 
     growthCycle() {
-        this.life = this.life * 1.05;
-        this.energy = this.energy - this.life;
+        this.life--;
+        
         if (this.isAlive()) {
             if (this.cells) {
                 this.cells.forEach((cell) => {
 
                     if (cell && cell.isAlive()) {
-                        this.energy = this.energy - 5;
+                        this.energy = this.energy - 10;
                         if (cell.getType() === CellType.Active) {
 
                             this.geneFactory.runGene(cell, this.geneArray, cell.gridDrive)
@@ -56,7 +56,7 @@ export class Tree {
                 })
             }
 
-            if (this.energy < 1) {
+            if (this.energy < 1 || this.life == 0) {
                 this.killTree()
             } 
         }

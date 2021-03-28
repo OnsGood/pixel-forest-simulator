@@ -16,6 +16,8 @@ export class GeneFactory {
     //  0   3   
     //    2
     // 0 to (countOfGenes-1) = generational genes
+    // countOfGenes = make cell seed 
+    // count of genes + 1 = make cell usual
 
     runGene(cell, geneArray, gridDrive) {
         let gene = geneArray[cell.startPoint]
@@ -24,8 +26,10 @@ export class GeneFactory {
             let behavior = gene[i]
             if (behavior >= 0 && behavior < this.countOfGenes) {
                 this.createCell(i, behavior, cell, gridDrive);
-            } else if (behavior >= this.countOfGenes && behavior < this.maxValueInGene) {
-
+            } else if (behavior === this.countOfGenes) {
+                this.changeCellType(cell, CellType.Seed)
+            } else if (behavior === (this.countOfGenes + 1)) {
+                this.changeCellType(cell, CellType.Usual)
             }
         }
     }
@@ -46,7 +50,7 @@ export class GeneFactory {
     createGeneArrayFromOld(geneArray) {
         let newGeneArray = []
         geneArray.forEach(gene => {
-            newGeneArray.push([gene[0],gene[1],gene[2],gene[3]])
+            newGeneArray.push([gene[0], gene[1], gene[2], gene[3]])
         });
         newGeneArray = this.mutateGeneArray(newGeneArray)
         return newGeneArray
@@ -54,7 +58,7 @@ export class GeneFactory {
 
     mutateGeneArray(geneArray) {
         if (Math.floor(Math.random() * 100) < this.mutationChance) {
-            let mutatGene = Math.floor(Math.random() * (this.countOfGenes-1))
+            let mutatGene = Math.floor(Math.random() * (this.countOfGenes - 1))
             let gene = geneArray[mutatGene];
 
             let mutatGenePart = Math.floor(Math.random() * 4)
@@ -69,6 +73,11 @@ export class GeneFactory {
     }
 
 
+
+
+    changeCellType(cell, type) {
+        cell.setType(type);
+    }
 
     createCell(BEH, startPoint, cell, gridDrive) {
         let x = null

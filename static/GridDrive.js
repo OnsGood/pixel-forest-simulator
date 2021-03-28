@@ -78,19 +78,31 @@ export class GridDrive {
                 if (this.cellArray[r][c] instanceof Cell) {
                     let lifeCell = this.cellArray[r][c]
 
+                    let energy = this.giveEnergy(lifeCell);
+                    if (energy < 20) {
+                        energy = 0
+                    } else if (energy < 50) {
+                        energy = 20
+                    } else if (energy < 100) {
+                        energy = 50
+                    } else {
+                        energy = 120
+                    }
+
+
                     switch (lifeCell.getType()) {
                         case CellType.Seed:
                             cell.setAttribute("style", `background-color: RGB(45,57,143)`);
                             break;
                         case CellType.Usual:
-                            cell.setAttribute("style", `background-color: RGB(27,80,29)`);
+                            cell.setAttribute("style", `background-color: RGB(${energy},${energy},${energy})`);
                             break;
                         case CellType.Active:
                             cell.setAttribute("style", `background-color: RGB(143,45,45)`);
                             break;
                     }
 
-                    this.giveEnergy(lifeCell);
+
 
                     this.serveSeeds(lifeCell);
                 }
@@ -116,11 +128,14 @@ export class GridDrive {
 
         if (lifeCell.getType() === CellType.Seed && !lifeCell.getTree().isAlive()) {
             if (lifeCell.x === (this.height - 1) && !this.isCoordsHasCell(lifeCell.x - 1, lifeCell.y)) {
+
                 if (!this.isCoordsHasCell(lifeCell.x, lifeCell.y - 1) &&
                     !this.isCoordsHasCell(lifeCell.x, lifeCell.y + 1)) {
+
                     let tree = new TreeFactory().createTreeFromSeed(lifeCell, this)
                     this.envDrive.addTree(tree);
                     lifeCell.remove();
+
                 } else {
                     if (Math.floor(Math.random() * 5) === 1) {
                         lifeCell.remove();
@@ -136,27 +151,22 @@ export class GridDrive {
 
     giveEnergy(cell) {
         if (cell.getType() === CellType.Usual) {
-            let energyMass = (this.height - 1) - cell.x;
-            let clearEnergy = 0;
+            let energyMass = ((this.height + 3) - cell.x);
 
-            if (energyMass < 2) {
-                clearEnergy = 5;
-            } else if (energyMass < 10) {
-                clearEnergy = energyMass + 5
-            } else if (energyMass < 50) {
-                clearEnergy = 30;
-            }
-            let winPercent = 1
+            let clearEnergy = energyMass + 5;
+
+            let winPercent = 3
 
             for (let i = cell.x - 1; i >= 0; i--) {
+                if (winPercent === 0) {
+                    break;
+                }
                 if (this.cellArray[i][cell.y] instanceof Cell) {
-                    //winPercent = winPercent - 0.3
+                    winPercent--;
                 }
             }
-
-            if (winPercent > 0) {
-                cell.giveEnergy(clearEnergy * winPercent);
-            }
+            cell.giveEnergy(clearEnergy * winPercent);
+            return clearEnergy * winPercent;
         }
     }
 
