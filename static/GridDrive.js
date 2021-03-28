@@ -5,38 +5,51 @@ import { TreeFactory } from "./trees/TreeFactory.js";
 
 export class GridDrive {
     cellArray = [];
-    height;
-    width;
-    canvas;
 
-    constructor(canvas, height, width, color) {
-        this.canvas = canvas;
+
+    constructor(stage, height, width, cellSize) {
+        this.stage = stage;
         this.height = height;
         this.width = width;
-        this.color = color;
+
+        this.cellHeight = height / cellSize;
+        this.cellWidth = width / cellSize;
+
+        this.cellSize = cellSize;
     }
 
     initEmpty() {
-        for (let i = 0; i < this.height; i++) {
-            const row = []
-            for (let j = 0; j < this.width; j++) {
-                row.push("empty")
+        for (let y = this.height - this.cellSize; y >= 0; y = (y - this.cellSize)) {
+            let yst = []
+            for (let x = 0; x < this.width; x = (x + this.cellSize)) {
+                let rect = this.stage.rect(x, y, this.cellSize, this.cellSize)
+                    .fill('white').stroke('white');
+                yst.push([rect, "empty"]);
             }
-            this.cellArray.push(row)
+            this.cellArray.push(yst)
+        }
+        this.cellArray = this.cellArray[0].map((_, colIndex) => this.cellArray.map(row => row[colIndex]));
+    }
+
+    changeCellColor(cell) {
+        if (cell && cell.isAlive() && this.cellArray[cell.x][cell.y]) {
+            this.cellArray[cell.x][cell.y][0].fill(cell.getType().color);
         }
     }
 
     addCell(cell) {
-        if (cell instanceof Cell) {
-            let yCord = this.fixCoordY(cell.y)
+        if (cell instanceof Cell && cell.isAlive()) {
+            let yCord = cell.y
+            let xCord = this.fixCoordX(cell.x)
+            cell.x = xCord;
 
-            if (this.coordInRange(cell.x, yCord)) {
-                if (this.cellArray[cell.x][yCord] === "empty") {
-                    cell.y = yCord;
-                    this.cellArray[cell.x][yCord] = cell;
-                } else {
-                    cell.alive = false;
-                }
+            //console.log(`x = ${xCord} , y = ${yCord} `)
+            if (this.coordInRange(xCord, yCord) && this.cellArray[xCord][yCord][1] === "empty") {
+                this.cellArray[xCord][yCord][1] = cell;
+                this.cellArray[xCord][yCord][0].fill(cell.getType().color);
+                //console.log(`type = ${cell.getType().color}`)
+            } else {
+                cell.remove()
             }
         }
     }
@@ -44,8 +57,10 @@ export class GridDrive {
     removeCell(cell) {
         if (cell instanceof Cell) {
             if (this.coordInRange(cell.x, cell.y)) {
-                if (this.cellArray[cell.x][cell.y] === cell) {
-                    this.cellArray[cell.x][cell.y] = "empty";
+                //console.log(`x = ${cell.x} , y = ${cell.y} `)
+                if (this.cellArray[cell.x][cell.y][1] === cell) {
+                    this.cellArray[cell.x][cell.y][1] = "empty";
+                    this.cellArray[cell.x][cell.y][0].fill('white');
                 }
             }
         }
@@ -56,12 +71,19 @@ export class GridDrive {
             if (this.coordInRange(cell.x, cell.y)) {
                 if (!(cell.x === newX && cell.y === newY)) {
 
-                    if (this.cellArray[newX][newY] === "empty") {
-                        this.cellArray[cell.x][cell.y] = "empty"
-                        this.cellArray[newX][newY] = cell;
+                    if (this.cellArray[newX][newY][1] === "empty") {
+
+                        this.cellArray[cell.x][cell.y][1] = "empty"
+                        this.cellArray[cell.x][cell.y][0].fill('white');
+
+                        this.cellArray[newX][newY][1] = cell;
+                        this.cellArray[newX][newY][0].fill(cell.getType().color);
                         cell.move(newX, newY)
+
                     } else {
-                        this.cellArray[cell.x][cell.y] = "empty"
+
+                        this.cellArray[cell.x][cell.y][1] = "empty"
+                        this.cellArray[cell.x][cell.y][0].fill('white');
                         cell.remove()
                     }
                 }
@@ -69,56 +91,16 @@ export class GridDrive {
         }
     }
 
-    renderInTable() {
-        this.clearGrid();
-        for (let r = 0; r < this.height; r++) {
-            const row = this.canvas.insertRow(r);
-            for (let c = 0; c < this.width; c++) {
-                const cell = row.insertCell(c);
-                if (this.cellArray[r][c] instanceof Cell) {
-                    let lifeCell = this.cellArray[r][c]
-
-                    let energy = this.giveEnergy(lifeCell);
-                    if (energy < 20) {
-                        energy = 0
-                    } else if (energy < 50) {
-                        energy = 20
-                    } else if (energy < 100) {
-                        energy = 50
-                    } else {
-                        energy = 120
-                    }
-
-
-                    switch (lifeCell.getType()) {
-                        case CellType.Seed:
-                            cell.setAttribute("style", `background-color: RGB(45,57,143)`);
-                            break;
-                        case CellType.Usual:
-                            cell.setAttribute("style", `background-color: RGB(${energy},${energy},${energy})`);
-                            break;
-                        case CellType.Active:
-                            cell.setAttribute("style", `background-color: RGB(143,45,45)`);
-                            break;
-                    }
-
-
-
-                    this.serveSeeds(lifeCell);
-                }
-            }
-        }
-    }
-
-    renderMock() {
-        for (let r = 0; r < this.height; r++) {
-            for (let c = 0; c < this.width; c++) {
-                if (this.cellArray[r][c] instanceof Cell) {
-                    let lifeCell = this.cellArray[r][c];
-
+    renderSVG() {
+        for (let y = 0; y < this.cellHeight; y++) {
+            for (let x = 0; x < this.cellWidth; x++) {
+                if (this.cellArray[x][y][1] instanceof Cell) {
+                    let lifeCell = this.cellArray[x][y][1];
                     this.giveEnergy(lifeCell);
 
                     this.serveSeeds(lifeCell);
+
+                    this.cleanCell(x, y);
                 }
             }
         }
@@ -127,23 +109,28 @@ export class GridDrive {
     serveSeeds(lifeCell) {
 
         if (lifeCell.getType() === CellType.Seed && !lifeCell.getTree().isAlive()) {
-            if (lifeCell.x === (this.height - 1) && !this.isCoordsHasCell(lifeCell.x - 1, lifeCell.y)) {
+            if (lifeCell.y === 0 && !this.isCoordsHasCell(lifeCell.x, lifeCell.y + 1)) {
+                if (Math.floor(Math.random() * 5) === 1) {
+                    lifeCell.remove();
+                } else if (!this.isCoordsHasCell(lifeCell.x + 1, lifeCell.y) &&
+                    !this.isCoordsHasCell(lifeCell.x - 1, lifeCell.y)) {
 
-                if (!this.isCoordsHasCell(lifeCell.x, lifeCell.y - 1) &&
-                    !this.isCoordsHasCell(lifeCell.x, lifeCell.y + 1)) {
+                    this.cellArray[lifeCell.x][lifeCell.y][1] = "empty";
+                    this.cellArray[lifeCell.x][lifeCell.y][0].fill('white');
 
                     let tree = new TreeFactory().createTreeFromSeed(lifeCell, this)
                     this.envDrive.addTree(tree);
+                    lifeCell.x = -5
+                    lifeCell.y = -5
                     lifeCell.remove();
 
-                } else {
-                    if (Math.floor(Math.random() * 5) === 1) {
-                        lifeCell.remove();
-                    }
                 }
-            }
-            if (this.coordInRange(lifeCell.x + 1, lifeCell.y)) {
-                this.moveCell(lifeCell, lifeCell.x + 1, lifeCell.y);
+            } else if (!this.isCoordsHasCell(lifeCell.x, lifeCell.y - 1)) {
+                this.moveCell(lifeCell, lifeCell.x, lifeCell.y - 1);
+            } else {
+                if (Math.floor(Math.random() * 5) === 1) {
+                    lifeCell.remove();
+                }
             }
         }
     }
@@ -151,49 +138,52 @@ export class GridDrive {
 
     giveEnergy(cell) {
         if (cell.getType() === CellType.Usual) {
-            let energyMass = ((this.height + 3) - cell.x);
+            let energyMass = cell.y;
 
-            let clearEnergy = energyMass + 5;
+            let clearEnergy = energyMass === 0 ? 0 : energyMass + 8;
 
             let winPercent = 3
-
-            for (let i = cell.x - 1; i >= 0; i--) {
-                if (winPercent === 0) {
+            let count = 0
+            for (let i = cell.y; i < this.cellHeight; i++) {
+                if (winPercent === 0 && count === 3) {
                     break;
                 }
-                if (this.cellArray[i][cell.y] instanceof Cell) {
+
+                if (this.cellArray[cell.x][i][1] instanceof Cell) {
                     winPercent--;
                 }
+                count++;
             }
+            //console.log(`x = ${cell.x} , y = ${cell.y}, energy = ${clearEnergy * winPercent} `)
             cell.giveEnergy(clearEnergy * winPercent);
             return clearEnergy * winPercent;
         }
     }
 
-    clearGrid() {
-        while (this.canvas.firstChild) {
-            this.canvas.removeChild(this.canvas.firstChild);
+    cleanCell(x, y) {
+        let cell = this.cellArray[x][y][1]
+        if (cell instanceof Cell && !cell.getTree) {
+            cell.remove()
         }
     }
 
-
-    fixCoordY(y) {
-        if (y > (this.width - 1)) {
-            y = y - (this.width - 1)
-        } else if (y < 0) {
-            y = (this.width - 1) + y
+    fixCoordX(x) {
+        if (x > (this.cellWidth - 1)) {
+            x = x - (this.cellWidth)
+        } else if (x < 0) {
+            x = (this.cellWidth) + x
         }
-        return y;
+        return x;
     }
 
     coordInRange(x, y) {
-        return ((x >= 0) && (y >= 0)) &&
-            ((x < this.cellArray.length) && (y < this.cellArray[0].length));
+        return ((y >= 0) && (y < this.cellArray[0].length));
     }
 
     isCoordsHasCell(x, y) {
-        if (this.coordInRange(x, y)) {
-            return this.cellArray[x][y] != "empty"
+        let xCord = this.fixCoordX(x)
+        if (this.coordInRange(xCord, y)) {
+            return this.cellArray[xCord][y][1] != "empty"
         } else {
             return true
         }

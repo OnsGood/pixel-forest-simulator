@@ -9,7 +9,7 @@ export class TreeFactory {
     startSimulation(gridDrive, maxX) {
         let treeArray = []
         for (let posX = 4; posX < maxX; posX = posX + 25) {
-            treeArray.push(this.createTree(gridDrive.height-1, posX, gridDrive));
+            treeArray.push(this.createTree(posX, 0, gridDrive));
         }
         return treeArray
     }

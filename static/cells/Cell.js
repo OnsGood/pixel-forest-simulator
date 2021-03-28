@@ -7,23 +7,13 @@ export class Cell {
     tree = ''
 
     constructor(x, y, type, gridDrive, startPoint) {
-        let height = document.getElementById("input_height");
+        this.alive = true
         this.x = x
         this.y = y
-
-        /*if (y > (height.value - 1)) {
-            this.y = (height.value - 1) - y
-        } else if (y < 0) {
-            this.y = (height.value - 1) + y
-        } else {
-            
-        }*/
         this.type = type
         this.gridDrive = gridDrive
         this.startPoint = startPoint
-
         this.gridDrive.addCell(this)
-        this.alive = true
     }
 
     isAlive() {
@@ -49,7 +39,10 @@ export class Cell {
     }
 
     setType(type) {
-        this.type = type
+        if (this.alive) {
+            this.type = type
+            this.gridDrive.changeCellColor(this);
+        }
     }
 
     move(newX, newY) {
@@ -60,14 +53,13 @@ export class Cell {
     }
 
     remove() {
+        this.alive = false
         this.gridDrive.removeCell(this)
         if (this.tree) {
             this.tree.removeCell(this)
         }
-        this.alive = false
         this.type = null
         this.tree = null
-        this.gridDrive = null
     }
 
 

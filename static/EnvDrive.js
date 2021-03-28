@@ -2,6 +2,9 @@ import { TreeFactory } from "./trees/TreeFactory.js";
 
 export class EnvDrive {
     treeArray = []
+    colorSeed = ""
+    colorUsual = ""
+    colorActive = ""
 
     constructor(gridDrive, renderType) {
         this.gridDrive = gridDrive;
@@ -15,7 +18,7 @@ export class EnvDrive {
 
     run() {
         if (Object.keys(this.treeArray).length === 0) {
-            this.treeArray = new TreeFactory().startSimulation(this.gridDrive, this.gridDrive.width - 1);
+            this.treeArray = new TreeFactory().startSimulation(this.gridDrive, this.gridDrive.cellWidth - 1);
         }
 
         let millisCycle1 = Date.now();
@@ -31,18 +34,17 @@ export class EnvDrive {
         let millisCycle2 = Date.now();
 
         if (this.renderVariant) {
-            this.gridDrive.renderInTable();
+            this.gridDrive.renderSVG();
         } else {
             this.gridDrive.renderMock();
         }
 
         let millisRender = Date.now();
 
-        console.log("grow time - " + (millisCycle2 - millisCycle1))
-        console.log("render time - " + (millisRender - millisCycle2))
-        console.log("renderType = " + this.renderVariant)
+        /*console.log("grow time - " + (millisCycle2 - millisCycle1))
+        console.log("render time - " + (millisRender - millisCycle2))*/
 
-        setTimeout(() => this.run(), 5)
+        setTimeout(() => this.run(), 50)
     }
 
     superRun() {

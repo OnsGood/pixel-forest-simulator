@@ -3,7 +3,7 @@ import { CellType } from "../cells/CellType.js";
 
 
 export class GeneFactory {
-    countOfGenes = 10;
+    countOfGenes = 15;
     maxValueInGene = 50;
     mutationChance = 10;
 
@@ -72,9 +72,6 @@ export class GeneFactory {
         return Math.floor(Math.random() * this.maxValueInGene);
     }
 
-
-
-
     changeCellType(cell, type) {
         cell.setType(type);
     }
@@ -84,20 +81,20 @@ export class GeneFactory {
         let y = null
         switch (BEH) {
             case this.BEH_LEFT:
-                x = 0
-                y = -1
-                break;
-            case this.BEH_UP:
                 x = -1
                 y = 0
                 break;
-            case this.BEH_DOWN:
-                x = 1
-                y = 0
-                break;
-            case this.BEH_RIGHT:
+            case this.BEH_UP:
                 x = 0
                 y = 1
+                break;
+            case this.BEH_DOWN:
+                x = 0
+                y = -1
+                break;
+            case this.BEH_RIGHT:
+                x = 1
+                y = 0
                 break;
         }
 
@@ -107,90 +104,3 @@ export class GeneFactory {
     }
 }
 
-
-
-
-let Behaviors = {
-    createNewCellUp(cell, data, gridDrive) {
-        let cordX = cell.x
-        let cordY = cell.y + 1
-
-        if (!gridDrive.isCoordsHasCell(cordX, cordY)) {
-            let newCell = new Cell(cordX, cordY, CellType.Active, gridDrive, data[1]);
-            cell.getTree().addCell(newCell);
-        }
-        return data[0]
-    },
-    createNewCellLeft(cell, data, gridDrive) {
-        let cordX = cell.x - 1
-        let cordY = cell.y
-
-        if (!gridDrive.isCoordsHasCell(cordX, cordY)) {
-            let newCell = new Cell(cordX, cordY, CellType.Active, gridDrive, data[1]);
-            cell.getTree().addCell(newCell);
-        }
-        return data[0]
-    },
-    createNewCellRight(cell, data, gridDrive) {
-        let cordX = cell.x + 1
-        let cordY = cell.y
-
-        if (!gridDrive.isCoordsHasCell(cordX, cordY)) {
-            let newCell = new Cell(cordX, cordY, CellType.Active, gridDrive, data[1]);
-            cell.getTree().addCell(newCell);
-        }
-        return data[0]
-    },
-    createNewCellDown(cell, data, gridDrive) {
-        let cordX = cell.x
-        let cordY = cell.y - 1
-
-        if (!gridDrive.isCoordsHasCell(cordX, cordY)) {
-            let newCell = new Cell(cordX, cordY, CellType.Active, gridDrive, data[1]);
-            cell.getTree().addCell(newCell);
-        }
-        return data[0]
-    },
-
-    getEnergy(cell, data, gridDrive) {
-        return data[0]
-    },
-
-    getSize(cell, data, gridDrive) {
-        let size = 1;
-        if (cell.getTree() && cell.getTree().getCells()) {
-            size = cell.getTree().getCells().lenght;
-        }
-        if (size >= data[2]) {
-            return data[0]
-        } else {
-            return data[1]
-        }
-    },
-    getHeight(cell, data, gridDrive) {
-        let height = cell.x;
-        if (height >= data[2]) {
-            return data[0]
-        } else {
-            return data[1]
-        }
-    },
-    changeCellTypeToSeed(cell, data, gridDrive) {
-        cell.setType(CellType.Seed)
-        return data[0]
-    },
-    changeCellTypeToUsual(cell, data, gridDrive) {
-        cell.setType(CellType.Usual)
-        return data[0]
-    },
-    killTree(cell, data, gridDrive) {
-        if (cell.getTree()) {
-            cell.getTree().killTree()
-        }
-        return data[0]
-    },
-    killCell(cell, data, gridDrive) {
-        //cell.remove()
-        return data[0]
-    },
-}
