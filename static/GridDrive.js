@@ -7,8 +7,8 @@ export class GridDrive {
     cellArray = [];
 
 
-    constructor(stage, height, width, cellSize) {
-        this.stage = stage;
+    constructor(drawingPlate, height, width, cellSize) {
+        this.drawingPlate = drawingPlate;
         this.height = height;
         this.width = width;
 
@@ -22,8 +22,12 @@ export class GridDrive {
         for (let y = this.height - this.cellSize; y >= 0; y = (y - this.cellSize)) {
             let yst = []
             for (let x = 0; x < this.width; x = (x + this.cellSize)) {
-                let rect = this.stage.rect(x, y, this.cellSize, this.cellSize)
-                    .fill('white').stroke('white');
+                let rect = {};
+                rect.x = x
+                rect.y = y
+                /*if (Math.floor(Math.random() * 3) === 1) {
+                    this.drawCell(rect, "blue")
+                }*/
                 yst.push([rect, "empty"]);
             }
             this.cellArray.push(yst)
@@ -31,9 +35,14 @@ export class GridDrive {
         this.cellArray = this.cellArray[0].map((_, colIndex) => this.cellArray.map(row => row[colIndex]));
     }
 
+    drawCell(rect, cellStyle) {
+        this.drawingPlate.fillStyle = cellStyle;
+        this.drawingPlate.fillRect(rect.x, rect.y, this.cellSize, this.cellSize);
+    }
+
     changeCellColor(cell) {
         if (cell && cell.isAlive() && this.cellArray[cell.x][cell.y]) {
-            this.cellArray[cell.x][cell.y][0].fill(cell.getType().color);
+            this.drawCell(this.cellArray[cell.x][cell.y][0], cell.getType().color);
         }
     }
 
@@ -46,7 +55,8 @@ export class GridDrive {
             //console.log(`x = ${xCord} , y = ${yCord} `)
             if (this.coordInRange(xCord, yCord) && this.cellArray[xCord][yCord][1] === "empty") {
                 this.cellArray[xCord][yCord][1] = cell;
-                this.cellArray[xCord][yCord][0].fill(cell.getType().color);
+                this.drawCell(this.cellArray[xCord][yCord][0], cell.getType().color)
+                this.cellArray[xCord][yCord][0]
                 //console.log(`type = ${cell.getType().color}`)
             } else {
                 cell.remove()
@@ -60,7 +70,7 @@ export class GridDrive {
                 //console.log(`x = ${cell.x} , y = ${cell.y} `)
                 if (this.cellArray[cell.x][cell.y][1] === cell) {
                     this.cellArray[cell.x][cell.y][1] = "empty";
-                    this.cellArray[cell.x][cell.y][0].fill('white');
+                    this.drawCell(this.cellArray[cell.x][cell.y][0], "white");
                 }
             }
         }
@@ -74,16 +84,16 @@ export class GridDrive {
                     if (this.cellArray[newX][newY][1] === "empty") {
 
                         this.cellArray[cell.x][cell.y][1] = "empty"
-                        this.cellArray[cell.x][cell.y][0].fill('white');
+                        this.drawCell(this.cellArray[cell.x][cell.y][0], 'white');
 
                         this.cellArray[newX][newY][1] = cell;
-                        this.cellArray[newX][newY][0].fill(cell.getType().color);
+                        this.drawCell(this.cellArray[newX][newY][0], cell.getType().color);
                         cell.move(newX, newY)
 
                     } else {
 
                         this.cellArray[cell.x][cell.y][1] = "empty"
-                        this.cellArray[cell.x][cell.y][0].fill('white');
+                        this.drawCell(this.cellArray[cell.x][cell.y][0], 'white');
                         cell.remove()
                     }
                 }
@@ -120,7 +130,7 @@ export class GridDrive {
                 ) {
 
                     this.cellArray[lifeCell.x][lifeCell.y][1] = "empty";
-                    this.cellArray[lifeCell.x][lifeCell.y][0].fill('white');
+                    this.drawCell(this.cellArray[lifeCell.x][lifeCell.y][0], 'white');
 
                     let tree = new TreeFactory().createTreeFromSeed(lifeCell, this)
                     this.envDrive.addTree(tree);
