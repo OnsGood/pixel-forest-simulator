@@ -15,9 +15,10 @@ export class GeneFactory {
     //    1
     //  0   3   
     //    2
-    // 0 to (countOfGenes-1) = generational genes
-    // countOfGenes = make cell seed 
-    // count of genes + 1 = make cell usual
+    // 0 to (CG-1)          = generational genes
+    // CG                   = make cell seed 
+    // CG + 1               = make cell usual
+    // CG + 2 to CG + 12    = +- x life to tree
 
     runGene(cell, geneArray, gridDrive) {
         let gene = geneArray[cell.startPoint]
@@ -30,6 +31,8 @@ export class GeneFactory {
                 this.changeCellType(cell, CellType.Seed)
             } else if (behavior === (this.countOfGenes + 1)) {
                 this.changeCellType(cell, CellType.Usual)
+            } else if (behavior >= (this.countOfGenes + 2) && behavior < (this.countOfGenes + 13)) {
+                this.addLifeToTree(cell.getTree(), (behavior - (this.countOfGenes + 7)))
             }
         }
     }
@@ -70,6 +73,13 @@ export class GeneFactory {
 
     getRandomGeneBehavior() {
         return Math.floor(Math.random() * this.maxValueInGene);
+    }
+
+
+
+    addLifeToTree(tree, value) {
+        //console.log(`tree = ${tree.serialize()} , energy = ${clearEnergy * winPercent} `)
+        tree.life = tree.life + value;
     }
 
     changeCellType(cell, type) {

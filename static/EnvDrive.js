@@ -9,7 +9,6 @@ export class EnvDrive {
     constructor(gridDrive, renderType) {
         this.gridDrive = gridDrive;
         this.renderVariant = true;
-        renderType.addEventListener('change', () => this.renderVariant = !this.renderVariant);
     }
 
     addTree(tree) {
@@ -33,18 +32,16 @@ export class EnvDrive {
         }
         let millisCycle2 = Date.now();
 
-        if (this.renderVariant) {
-            this.gridDrive.renderSVG();
-        } else {
-            this.gridDrive.renderMock();
-        }
+        this.gridDrive.renderSVG();
+
+
 
         let millisRender = Date.now();
 
         /*console.log("grow time - " + (millisCycle2 - millisCycle1))
         console.log("render time - " + (millisRender - millisCycle2))*/
 
-        setTimeout(() => this.run(), 50)
+        setTimeout(() => this.run(), 20)
     }
 
     superRun() {
@@ -76,5 +73,7 @@ export class EnvDrive {
         console.log("trees - " + Object.keys(this.treeArray).length)
 
     }
+
+
 
 }

@@ -2,14 +2,15 @@ import { CellType } from "../cells/CellType.js";
 
 export class Tree {
     cells = [];
-    energy = 100;
+    energy;
     life = 50;
 
-    constructor(startCell, geneFactory) {
+    constructor(startCell, geneFactory, energy) {
         this.id = Date.now();
         this.addCell(startCell)
         this.alive = true
         this.geneFactory = geneFactory
+        this.energy = energy;
     }
 
     isAlive() {
@@ -21,7 +22,9 @@ export class Tree {
     }
 
     addEnergy(count) {
-        this.energy = this.energy + count;
+        if (this.energy < 50000) {
+            this.energy = this.energy + count;
+        }
     }
 
     getCells() {
@@ -56,7 +59,7 @@ export class Tree {
                 })
             }
 
-            if (this.energy < 1 || this.life == 0) {
+            if (this.energy < 1 || this.life < 1) {
                 this.killTree()
             }
         }
@@ -64,7 +67,16 @@ export class Tree {
 
     killTree() {
         this.alive = false;
+        let seedCount = 0;
         if (this.cells) {
+            this.cells.forEach((cell) => {
+                if (cell && cell.isAlive()) {
+                    if (cell.getType() != CellType.Usual) {
+                        seedCount++;
+                    }
+                }
+            })
+
             this.cells.forEach((cell) => {
                 if (cell && cell.isAlive()) {
 
@@ -73,6 +85,7 @@ export class Tree {
                     } else {
                         cell.setType(CellType.Seed);
                         cell.geneArray = this.geneArray;
+                        cell.energy = ((this.energy + 1) / seedCount) + 100
                     }
 
                 }
@@ -103,5 +116,17 @@ export class Tree {
             }
             return false;
         });
+    }
+
+    serialize() {
+        if (this.isAlive()) {
+            let data = {};
+            data.gene = this.geneArray;
+            data.life = this.life;
+            data.energy = this.energy;
+            data.countOfCells = this.cells.length;
+            return JSON.stringify(data, null, 2)
+        }
+        return null;
     }
 }

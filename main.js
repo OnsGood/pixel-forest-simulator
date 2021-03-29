@@ -6,5 +6,5 @@ app.use('/st', express.static('static'));
 
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Example app listening at http://192.168.1.214:${port}`)
 })

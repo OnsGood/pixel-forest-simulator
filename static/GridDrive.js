@@ -109,11 +109,15 @@ export class GridDrive {
     serveSeeds(lifeCell) {
 
         if (lifeCell.getType() === CellType.Seed && !lifeCell.getTree().isAlive()) {
-            if (lifeCell.y === 0 && !this.isCoordsHasCell(lifeCell.x, lifeCell.y + 1)) {
+            if (lifeCell.y === 0) {
                 if (Math.floor(Math.random() * 5) === 1) {
                     lifeCell.remove();
-                } else if (!this.isCoordsHasCell(lifeCell.x + 1, lifeCell.y) &&
-                    !this.isCoordsHasCell(lifeCell.x - 1, lifeCell.y)) {
+                } else if (
+                    !this.isCoordsHasCell(lifeCell.x + 1, lifeCell.y) &&
+                    !this.isCoordsHasCell(lifeCell.x - 1, lifeCell.y) &&
+                    !this.isCoordsHasCell(lifeCell.x, lifeCell.y + 1) &&
+                    !this.isCoordsHasCell(lifeCell.x, lifeCell.y + 2)
+                ) {
 
                     this.cellArray[lifeCell.x][lifeCell.y][1] = "empty";
                     this.cellArray[lifeCell.x][lifeCell.y][0].fill('white');
@@ -140,7 +144,7 @@ export class GridDrive {
         if (cell.getType() === CellType.Usual) {
             let energyMass = cell.y;
 
-            let clearEnergy = energyMass === 0 ? 0 : energyMass + 8;
+            let clearEnergy = energyMass === 0 ? 0 : energyMass + 10;
 
             let winPercent = 3
             let count = 0
@@ -154,7 +158,9 @@ export class GridDrive {
                 }
                 count++;
             }
+
             //console.log(`x = ${cell.x} , y = ${cell.y}, energy = ${clearEnergy * winPercent} `)
+
             cell.giveEnergy(clearEnergy * winPercent);
             return clearEnergy * winPercent;
         }
