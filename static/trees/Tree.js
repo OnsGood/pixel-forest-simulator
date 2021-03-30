@@ -3,7 +3,7 @@ import { CellType } from "../cells/CellType.js";
 export class Tree {
     cells = [];
     energy;
-    life = 50;
+    life = window.simConfig.startTreeLife;
 
     constructor(startCell, geneFactory, energy) {
         this.id = Date.now();

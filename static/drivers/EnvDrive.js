@@ -98,7 +98,7 @@ export class EnvDrive {
 
 
     clear(treeArray) {
-        console.log("Clean!")
+        //console.log("Clean!")
         treeArray = treeArray.filter((tree) => {
             if (tree) {
                 if (tree.isAlive()) {
@@ -118,7 +118,7 @@ export class EnvDrive {
             }
             return false;
         });
-        console.log("trees - " + Object.keys(treeArray).length)
+        //console.log("trees - " + Object.keys(treeArray).length)
         return treeArray;
     }
 }

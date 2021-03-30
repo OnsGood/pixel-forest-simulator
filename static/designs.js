@@ -5,6 +5,7 @@ import { SimConfig } from "./drivers/SimConfig.js";
 
 let sizePicker = document.getElementById("sizePicker");
 let rastrCanvas = document.getElementById("canv");
+let startButton = document.getElementsByClassName("start_button")[0];
 
 let envDrive;
 let gridDrive;
@@ -15,7 +16,7 @@ sizePicker.onsubmit = function (event) {
 };
 
 function makeGrid() {
-
+    startButton.setAttribute("disabled", '')
     window.simConfig = new SimConfig();
 
     let width = 5000;

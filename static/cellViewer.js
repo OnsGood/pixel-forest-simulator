@@ -8,6 +8,7 @@ let closeElement = document.getElementsByClassName("close_modal_window")[0];
 let cellType = document.getElementById("cell_type");
 let treeEnegy = document.getElementById("tree_energy");
 let treeLife = document.getElementById("tree_life");
+let treeCellCount = document.getElementById("tree_cell_count");
 
 let modalCanvas = document.getElementById("modal_canv");
 let canvasContainer = document.getElementsByClassName("modal_canvas");
@@ -59,6 +60,7 @@ export class CellViewer {
                 cellData.color = cell.type.color;
                 cellData.life = cell.tree.life;
                 cellData.energy = Math.floor(cell.tree.energy);
+                cellData.cellCount = cell.tree.cells.length;
 
                 if (cell.tree) {
                     cellData.geneArray = cell.tree.geneArray;
@@ -81,6 +83,7 @@ export class CellViewer {
 
         treeEnegy.textContent = `Tree energy - ${cellData.energy}`;
         treeLife.textContent = `Tree life - ${cellData.life}`;
+        treeCellCount.textContent = `Tree cell count - ${cellData.cellCount}`;
 
         this.preload()
         this.vievRunner = this.envDrive.viewTreeRun(cellData, Math.floor(this.width/20), 1000, 200)

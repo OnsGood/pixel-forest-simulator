@@ -8,6 +8,9 @@ export class SimConfig {
     startSeedEnergy = 200
     startSeedEnergySum = 50
 
+    //life options
+    startTreeLife = 50
+
     //render options 
     delay = 10
     backColor = "white"
