@@ -1,68 +1,112 @@
 body {
     text-align: center;
-  }
-  
-  .mainTitle {
+}
+
+.mainTitle {
     font-family: 'Audiowide', sans-serif;
     font-size: 2rem;
     margin: 0.2em;
     color: #c88;
-  }
-  
-  .chooseTitle {
+}
+
+.viewerTitle {
+    font-family: 'Audiowide', sans-serif;
+    font-size: 2rem;
+    margin: 0.2em;
+    color: #c88;
+}
+
+.chooseTitle {
     margin: 1em 0 0.25em;
-  }
-  
-  table, tr, td {
+}
+
+table,
+tr,
+td {
     border: 1px solid rgb(255, 255, 255);
     font-size: 10px;
     color: white;
-  }
-  
-  table {
+}
+
+table {
     border-collapse: collapse;
     margin: 40px auto;
-  }
-  
-  tr {
+}
+
+tr {
     height: 10px;
-  }
-  
-  td {
+}
+
+td {
     width: 10px;
-  }
-  
-  input[type=number] {
+}
+
+input[type=number] {
     width: 3em;
     margin-right: 10px;
-  }
-  
-  input[type=submit] {
+}
+
+input[type=submit] {
     margin-right: 2em;
-  }
-  
-  
-  @media screen and (max-width: 480px) {
-  
-    .mainTitle {
-      font-size: 1.1rem;
-      display: inline;
-    }
-  
-    .chooseTitle {
-      font-size: 1.1rem;
-      display: inline;
-    }
-  
-    table {
-      margin: 10px auto;
-    }
-  
-      tr {
-      height: 30px;
-    }
-  
-    td {
-      width: 30px;
-    }
-  }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+.modal .modal_content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    z-index: 99999;
+}
+
+.modal .modal_content .close_modal_window {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal .modal_xxx {
+    display: flex;
+    background-color: #fefefe;
+    width: 100%;
+    z-index: 99998;
+}
+
+.modal .modal_data {
+    background-color: #fefefe;
+    margin-top: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 20%;
+    z-index: 99999;
+}
+
+.modal .modal_data span {
+    display:flex;
+    font-family: 'Audiowide', sans-serif;
+}
+
+.modal .modal_canvas {
+    background-color: #fefefe;
+    margin-left: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    z-index: 99999;
+}
+

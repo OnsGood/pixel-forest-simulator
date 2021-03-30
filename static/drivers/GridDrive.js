@@ -1,11 +1,10 @@
-import { Cell } from "./cells/Cell.js";
-import { CellType } from "./cells/CellType.js";
-import { TreeFactory } from "./trees/TreeFactory.js";
+import { Cell } from "../cells/Cell.js";
+import { CellType } from "../cells/CellType.js";
+import { TreeFactory } from "../trees/TreeFactory.js";
 
 
 export class GridDrive {
-    cellArray = [];
-
+    cellArray = [];       
 
     constructor(drawingPlate, height, width, cellSize) {
         this.drawingPlate = drawingPlate;
@@ -19,15 +18,17 @@ export class GridDrive {
     }
 
     initEmpty() {
+        this.cellArray = []
+        this.drawingPlate.fillStyle = window.simConfig.backColor
         for (let y = this.height - this.cellSize; y >= 0; y = (y - this.cellSize)) {
             let yst = []
             for (let x = 0; x < this.width; x = (x + this.cellSize)) {
                 let rect = {};
                 rect.x = x
                 rect.y = y
-                /*if (Math.floor(Math.random() * 3) === 1) {
-                    this.drawCell(rect, "blue")
-                }*/
+
+                this.drawingPlate.fillRect(x, y, this.cellSize, this.cellSize);
+
                 yst.push([rect, "empty"]);
             }
             this.cellArray.push(yst)
@@ -70,7 +71,7 @@ export class GridDrive {
                 //console.log(`x = ${cell.x} , y = ${cell.y} `)
                 if (this.cellArray[cell.x][cell.y][1] === cell) {
                     this.cellArray[cell.x][cell.y][1] = "empty";
-                    this.drawCell(this.cellArray[cell.x][cell.y][0], "white");
+                    this.drawCell(this.cellArray[cell.x][cell.y][0], window.simConfig.backColor);
                 }
             }
         }
@@ -84,7 +85,7 @@ export class GridDrive {
                     if (this.cellArray[newX][newY][1] === "empty") {
 
                         this.cellArray[cell.x][cell.y][1] = "empty"
-                        this.drawCell(this.cellArray[cell.x][cell.y][0], 'white');
+                        this.drawCell(this.cellArray[cell.x][cell.y][0], window.simConfig.backColor);
 
                         this.cellArray[newX][newY][1] = cell;
                         this.drawCell(this.cellArray[newX][newY][0], cell.getType().color);
@@ -93,7 +94,7 @@ export class GridDrive {
                     } else {
 
                         this.cellArray[cell.x][cell.y][1] = "empty"
-                        this.drawCell(this.cellArray[cell.x][cell.y][0], 'white');
+                        this.drawCell(this.cellArray[cell.x][cell.y][0], window.simConfig.backColor);
                         cell.remove()
                     }
                 }
@@ -117,7 +118,6 @@ export class GridDrive {
     }
 
     serveSeeds(lifeCell) {
-
         if (lifeCell.getType() === CellType.Seed && !lifeCell.getTree().isAlive()) {
             if (lifeCell.y === 0) {
                 if (Math.floor(Math.random() * 5) === 1) {
@@ -130,7 +130,7 @@ export class GridDrive {
                 ) {
 
                     this.cellArray[lifeCell.x][lifeCell.y][1] = "empty";
-                    this.drawCell(this.cellArray[lifeCell.x][lifeCell.y][0], 'white');
+                    this.drawCell(this.cellArray[lifeCell.x][lifeCell.y][0], window.simConfig.backColor);
 
                     let tree = new TreeFactory().createTreeFromSeed(lifeCell, this)
                     this.envDrive.addTree(tree);
@@ -154,12 +154,12 @@ export class GridDrive {
         if (cell.getType() === CellType.Usual) {
             let energyMass = cell.y;
 
-            let clearEnergy = energyMass === 0 ? 0 : energyMass + 10;
+            let clearEnergy = energyMass === 0 ? 0 : energyMass + window.simConfig.energyMassSum;
 
-            let winPercent = 3
             let count = 0
-            for (let i = cell.y; i < this.cellHeight; i++) {
-                if (winPercent === 0 && count === 3) {
+            let winPercent = window.simConfig.winPercent
+            for (let i = cell.y + 1; i < this.cellHeight; i++) {
+                if (winPercent === 0 || count === window.simConfig.maxHeighSteps) {
                     break;
                 }
 
@@ -169,10 +169,12 @@ export class GridDrive {
                 count++;
             }
 
-            //console.log(`x = ${cell.x} , y = ${cell.y}, energy = ${clearEnergy * winPercent} `)
+            clearEnergy = clearEnergy * winPercent;
 
-            cell.giveEnergy(clearEnergy * winPercent);
-            return clearEnergy * winPercent;
+            clearEnergy = clearEnergy > window.simConfig.maxEnergy ? window.simConfig.maxEnergy : clearEnergy;
+
+            cell.giveEnergy(clearEnergy);
+            return clearEnergy;
         }
     }
 
@@ -181,6 +183,17 @@ export class GridDrive {
         if (cell instanceof Cell && !cell.getTree) {
             cell.remove()
         }
+    }
+
+
+    getCellOnCanvas(clientX, clientY) {
+        clientY = this.height - clientY;
+
+        let cordX = ((clientX - (clientX % this.cellSize)) / this.cellSize);
+        let cordY = ((clientY - (clientY % this.cellSize)) / this.cellSize);
+        //alert(`cordX = ${cordX}, cordY = ${cordY}, cellType = ${this.cellArray[cordX][cordY][1].type.color}`);
+
+        return this.cellArray[cordX][cordY][1];
     }
 
     fixCoordX(x) {

@@ -9,7 +9,7 @@ export class TreeFactory {
     startSimulation(gridDrive, maxX) {
         let treeArray = []
         for (let posX = 4; posX < maxX; posX = posX + 25) {
-            treeArray.push(this.createTree(posX, 0, gridDrive, 200));
+            treeArray.push(this.createTree(posX, 0, gridDrive, window.simConfig.startSeedEnergy));
         }
         return treeArray
     }
@@ -30,6 +30,13 @@ export class TreeFactory {
         let geneArray = this.geneFactory.createGeneArrayFromOld(seedCell.geneArray);
 
         let tree = new Tree(startCell, this.geneFactory, seedCell.energy);
+        tree.setGeneArray(geneArray);
+        return tree;
+    }
+
+    createTreeFromGenes(posX, posY, gridDrive, energy, geneArray) {
+        let startCell = new Cell(posX, posY, CellType.Active, gridDrive, 0);
+        let tree = new Tree(startCell, this.geneFactory, energy);
         tree.setGeneArray(geneArray);
         return tree;
     }

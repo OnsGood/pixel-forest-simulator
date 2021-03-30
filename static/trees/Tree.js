@@ -21,6 +21,12 @@ export class Tree {
         this.geneArray = geneArray
     }
 
+    addLife(count) {
+        if (this.life < 500) {
+            this.life = this.life + count;
+        }
+    }
+
     addEnergy(count) {
         if (this.energy < 50000) {
             this.energy = this.energy + count;
@@ -85,7 +91,7 @@ export class Tree {
                     } else {
                         cell.setType(CellType.Seed);
                         cell.geneArray = this.geneArray;
-                        cell.energy = ((this.energy + 1) / seedCount) + 100
+                        cell.energy = ((this.energy + 1) / seedCount) + window.simConfig.startSeedEnergySum;
                     }
 
                 }

@@ -1,27 +1,22 @@
-import { EnvDrive } from "./EnvDrive.js";
-import { GridDrive } from "./GridDrive.js";
+import { CellViewer } from "./cellViewer.js";
+import { EnvDrive } from "./drivers/EnvDrive.js";
+import { GridDrive } from "./drivers/GridDrive.js";
+import { SimConfig } from "./drivers/SimConfig.js";
 
 let sizePicker = document.getElementById("sizePicker");
-//let renderType = document.getElementById("renderType");
-//let stageContainer = document.getElementById("stage-container");
-let saveTrees = document.getElementById("saveTrees");
 let rastrCanvas = document.getElementById("canv");
 
 let envDrive;
+let gridDrive;
 
 sizePicker.onsubmit = function (event) {
     event.preventDefault();
     makeGrid();
 };
 
-
-saveTrees.onclick = function saveTreesReaction() {
-    envDrive.treeArray.forEach((tree) => {
-        console.log(tree.serialize());
-    })
-}
-
 function makeGrid() {
+
+    window.simConfig = new SimConfig();
 
     let width = 5000;
     let height = 500;
@@ -30,18 +25,17 @@ function makeGrid() {
 
     let context = rastrCanvas.getContext("2d");
 
-    let gridDrive = new GridDrive(context, height, width, 10);
+    gridDrive = new GridDrive(context, height, width, 10);
 
     gridDrive.initEmpty();
 
-    envDrive = new EnvDrive(gridDrive, null);
+    envDrive = new EnvDrive(gridDrive);
 
     gridDrive.envDrive = envDrive;
 
     envDrive.superRun()
 
-    //context.fillRect(1, 1, 15, 15);
+    let cellViewer = new CellViewer();
 
+    cellViewer.init(gridDrive);
 }
-
-

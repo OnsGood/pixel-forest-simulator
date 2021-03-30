@@ -79,7 +79,7 @@ export class GeneFactory {
 
     addLifeToTree(tree, value) {
         //console.log(`tree = ${tree.serialize()} , energy = ${clearEnergy * winPercent} `)
-        tree.life = tree.life + value;
+        tree.addLife(value);
     }
 
     changeCellType(cell, type) {

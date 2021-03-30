@@ -5,21 +5,37 @@
   <title>Pixel Art Maker!</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide&text=Pixel%Art%Maker">
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.anychart.com/releases/8.9.0/js/graphics.min.js"></script>
 </head>
 
 <body>
   <div id="container">
     <div class="panel">
       <h1 class="mainTitle">Tree evolution sim</h1>
-
-      <h2 class="chooseTitle">Choose Grid Size and Colors</h2>
       <form id="sizePicker">
         <input type="submit" value="start">
       </form>
-      <input id="saveTrees" type="submit" value="save trees">
 
+    </div>
 
+    <div id="my_modal" class="modal">
+      <div class="modal_content">
+        <span class="close_modal_window">×</span>
+        <h2 class="viewerTitle">Cell viewer</h2>
+        <div class="modal_xxx">
+          <div class="modal_data">
+            <span id="cell_type"></span>
+            <span id="tree_energy"></span>
+            <span id="tree_life"></span>
+            
+          </div>
+
+          <div class="modal_canvas">
+            <canvas id="modal_canv" width="500" height="300"></canvas>
+          </div>
+
+        </div>
+
+      </div>
     </div>
     <canvas id="canv"></canvas>
   </div>
