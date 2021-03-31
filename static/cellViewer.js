@@ -9,9 +9,14 @@ let cellType = document.getElementById("cell_type");
 let treeEnegy = document.getElementById("tree_energy");
 let treeLife = document.getElementById("tree_life");
 let treeCellCount = document.getElementById("tree_cell_count");
+let posX = document.getElementById("posX");
+let posY = document.getElementById("posY");
+let cellEnergy = document.getElementById("cellEnergy");
+
 
 let modalCanvas = document.getElementById("modal_canv");
 let canvasContainer = document.getElementsByClassName("modal_canvas");
+let modalData = document.getElementsByClassName("modal_data")[0];
 let rastrCanvas = document.getElementById("canv");
 
 export class CellViewer {
@@ -43,7 +48,6 @@ export class CellViewer {
 
         closeElement.onclick = function () {
             modal.style.display = "none";
-            console.log(cellViewer.vievRunner)
             cellViewer.closeCellViever()
         }
 
@@ -59,8 +63,11 @@ export class CellViewer {
                 cellData.type = cell.type.name;
                 cellData.color = cell.type.color;
                 cellData.life = cell.tree.life;
-                cellData.energy = Math.floor(cell.tree.energy);
+                cellData.treeEnergy = Math.floor(cell.tree.energy);
                 cellData.cellCount = cell.tree.cells.length;
+                cellData.x = cell.x
+                cellData.y = cell.y
+                cellData.energy = Math.floor(cell.energy)
 
                 if (cell.tree) {
                     cellData.geneArray = cell.tree.geneArray;
@@ -81,13 +88,18 @@ export class CellViewer {
         cellType.textContent = `Cell type - ${cellData.type}`;
         cellType.setAttribute("style", `color:${cellData.color}`);
 
-        treeEnegy.textContent = `Tree energy - ${cellData.energy}`;
+        treeEnegy.textContent = `Tree energy - ${cellData.treeEnergy}`;
         treeLife.textContent = `Tree life - ${cellData.life}`;
         treeCellCount.textContent = `Tree cell count - ${cellData.cellCount}`;
 
+        posX.textContent = `Cell x pos - ${cellData.x}`;
+        posY.textContent = `Cell y pos - ${cellData.y}`;
+        cellEnergy.textContent = `Cell energy - ${cellData.energy}`;
+      
+
         this.preload()
-        this.vievRunner = this.envDrive.viewTreeRun(cellData, Math.floor(this.width/20), 1000, 200)
-        console.log(this.vievRunner)
+        this.vievRunner = this.envDrive.viewTreeRun(cellData, Math.floor(this.width / 20), 1000, 200)
+        //console.log(this.vievRunner)
     }
 
     closeCellViever() {

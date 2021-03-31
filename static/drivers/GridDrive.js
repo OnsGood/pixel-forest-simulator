@@ -4,7 +4,7 @@ import { TreeFactory } from "../trees/TreeFactory.js";
 
 
 export class GridDrive {
-    cellArray = [];       
+    cellArray = [];
 
     constructor(drawingPlate, height, width, cellSize) {
         this.drawingPlate = drawingPlate;
@@ -153,8 +153,9 @@ export class GridDrive {
     giveEnergy(cell) {
         if (cell.getType() === CellType.Usual) {
             let energyMass = cell.y;
+            let clearEnergy = 0;
 
-            let clearEnergy = energyMass === 0 ? 0 : energyMass + window.simConfig.energyMassSum;
+            clearEnergy = Math.abs(Math.cos(energyMass / 10 + 5) * 25)
 
             let count = 0
             let winPercent = window.simConfig.winPercent
@@ -174,6 +175,7 @@ export class GridDrive {
             clearEnergy = clearEnergy > window.simConfig.maxEnergy ? window.simConfig.maxEnergy : clearEnergy;
 
             cell.giveEnergy(clearEnergy);
+
             return clearEnergy;
         }
     }

@@ -9,6 +9,7 @@ let startButton = document.getElementsByClassName("start_button")[0];
 
 let envDrive;
 let gridDrive;
+window.simConfig = new SimConfig();
 
 sizePicker.onsubmit = function (event) {
     event.preventDefault();
@@ -17,10 +18,9 @@ sizePicker.onsubmit = function (event) {
 
 function makeGrid() {
     startButton.setAttribute("disabled", '')
-    window.simConfig = new SimConfig();
 
-    let width = 5000;
-    let height = 500;
+    let width = 6000;
+    let height = 600;
     rastrCanvas.setAttribute("width", `${width}px`);
     rastrCanvas.setAttribute("height", `${height}px`);
 

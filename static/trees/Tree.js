@@ -4,6 +4,7 @@ export class Tree {
     cells = [];
     energy;
     life = window.simConfig.startTreeLife;
+    maxCells = window.simConfig.maxCells;
 
     constructor(startCell, geneFactory, energy) {
         this.id = Date.now();
@@ -65,7 +66,7 @@ export class Tree {
                 })
             }
 
-            if (this.energy < 1 || this.life < 1) {
+            if (this.energy < 1 || this.life < 1 || this.cells.length > this.maxCells) {
                 this.killTree()
             }
         }

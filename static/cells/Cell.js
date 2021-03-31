@@ -14,6 +14,7 @@ export class Cell {
         this.gridDrive = gridDrive
         this.startPoint = startPoint
         this.gridDrive.addCell(this)
+        this.energy = 0;
     }
 
     isAlive() {
@@ -21,6 +22,7 @@ export class Cell {
     }
 
     giveEnergy(count) {
+        this.energy = count;
         if (this.tree) {
             this.tree.addEnergy(count);
         }
