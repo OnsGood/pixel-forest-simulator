@@ -6,12 +6,13 @@ export class Tree {
     life = window.simConfig.startTreeLife;
     maxCells = window.simConfig.maxCells;
 
-    constructor(startCell, geneFactory, energy) {
+    constructor(startCell, geneFactory, energy, generation) {
         this.id = Date.now();
         this.addCell(startCell)
         this.alive = true
         this.geneFactory = geneFactory
         this.energy = energy;
+        this.generation = generation;
     }
 
     isAlive() {
@@ -92,6 +93,7 @@ export class Tree {
                     } else {
                         cell.setType(CellType.Seed);
                         cell.geneArray = this.geneArray;
+                        cell.generation = this.generation;
                         cell.energy = ((this.energy + 1) / seedCount) + window.simConfig.startSeedEnergySum;
                     }
 

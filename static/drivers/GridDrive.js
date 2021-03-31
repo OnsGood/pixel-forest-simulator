@@ -155,7 +155,7 @@ export class GridDrive {
             let energyMass = cell.y;
             let clearEnergy = 0;
 
-            clearEnergy = Math.abs(Math.cos(energyMass / 10 + 5) * 25)
+            clearEnergy = Math.abs(Math.cos(energyMass / 10 + 5) * window.simConfig.energyFactor)
 
             let count = 0
             let winPercent = window.simConfig.winPercent

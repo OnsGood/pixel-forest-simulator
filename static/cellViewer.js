@@ -12,6 +12,7 @@ let treeCellCount = document.getElementById("tree_cell_count");
 let posX = document.getElementById("posX");
 let posY = document.getElementById("posY");
 let cellEnergy = document.getElementById("cellEnergy");
+let generation = document.getElementById("generation");
 
 
 let modalCanvas = document.getElementById("modal_canv");
@@ -67,7 +68,8 @@ export class CellViewer {
                 cellData.cellCount = cell.tree.cells.length;
                 cellData.x = cell.x
                 cellData.y = cell.y
-                cellData.energy = Math.floor(cell.energy)
+                cellData.energy = Math.floor(cell.tenergy)
+                cellData.generation = cell.tree.generation
 
                 if (cell.tree) {
                     cellData.geneArray = cell.tree.geneArray;
@@ -91,6 +93,7 @@ export class CellViewer {
         treeEnegy.textContent = `Tree energy - ${cellData.treeEnergy}`;
         treeLife.textContent = `Tree life - ${cellData.life}`;
         treeCellCount.textContent = `Tree cell count - ${cellData.cellCount}`;
+        generation.textContent = `Generation - ${cellData.generation}`;
 
         posX.textContent = `Cell x pos - ${cellData.x}`;
         posY.textContent = `Cell y pos - ${cellData.y}`;

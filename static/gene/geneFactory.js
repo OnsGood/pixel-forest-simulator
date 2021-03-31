@@ -43,6 +43,9 @@ export class GeneFactory {
                 this.chooseBeh(dopBeh, dopData, cell, this.changeCellType.bind(this), cell, CellType.Usual)
             } else if (behavior === (this.countOfGenes + 2)) {
                 this.chooseBeh(dopBeh, dopData, cell, this.addLifeToTree.bind(this), cell.getTree(), gene[4])
+            } else if (behavior === (this.countOfGenes + 3)) {
+                this.chooseBeh(dopBeh, dopData, cell, this.killCell.bind(this), cell)
+                break;
             }
         }
     }
@@ -103,7 +106,7 @@ export class GeneFactory {
                 callback(...args);
                 break;
             case 1:
-                if (cell.tree.energy > dopData)
+                if (cell.tree.cells.length > dopData)
                     callback(...args);
                 break;
             case 2:
@@ -130,6 +133,10 @@ export class GeneFactory {
 
     changeCellType(cell, type) {
         cell.setType(type);
+    }
+
+    killCell(cell) {
+        cell.remove();
     }
 
     createCell(BEH, startPoint, cell, gridDrive) {

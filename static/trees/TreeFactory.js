@@ -19,7 +19,7 @@ export class TreeFactory {
 
         let geneArray = this.geneFactory.createNewGeneArray();
 
-        let tree = new Tree(startCell, this.geneFactory, energy);
+        let tree = new Tree(startCell, this.geneFactory, energy, 1);
         tree.setGeneArray(geneArray);
         return tree;
     }
@@ -29,14 +29,14 @@ export class TreeFactory {
 
         let geneArray = this.geneFactory.createGeneArrayFromOld(seedCell.geneArray);
 
-        let tree = new Tree(startCell, this.geneFactory, seedCell.energy);
+        let tree = new Tree(startCell, this.geneFactory, seedCell.energy, seedCell.generation + 1);
         tree.setGeneArray(geneArray);
         return tree;
     }
 
     createTreeFromGenes(posX, posY, gridDrive, energy, geneArray) {
         let startCell = new Cell(posX, posY, CellType.Active, gridDrive, 0);
-        let tree = new Tree(startCell, this.geneFactory, energy);
+        let tree = new Tree(startCell, this.geneFactory, energy, 0);
         tree.setGeneArray(geneArray);
         return tree;
     }
