@@ -1,16 +1,12 @@
 {
-  "name": "pixels",
+  "name": "pixel-forest-sim",
   "version": "1.0.0",
-  "description": "pixels evolution drive",
+  "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "debug": "node main.js"
+    "dev" : "nodemon",
+    "start": "node main.js"
   },
   "author": "sfedorov",
-  "license": "ISC",
-  "dependencies": {
-    "graphicsjs": "^1.3.2",
-    "nodemon": "^2.0.7"
-  }
+  "license": "ISC"
 }

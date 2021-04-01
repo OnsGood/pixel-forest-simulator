@@ -26,6 +26,7 @@ export class GeneFactory {
     // CG                   = make cell seed 
     // CG + 1               = make cell usual
     // CG + 2               = +- x life to tree
+    // CG + 3               = kill cell
 
     runGene(cell, geneArray, gridDrive) {
         let gene = geneArray[cell.startPoint]
