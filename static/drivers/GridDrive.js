@@ -105,13 +105,13 @@ export class GridDrive {
     renderSVG() {
         for (let y = 0; y < this.cellHeight; y++) {
             for (let x = 0; x < this.cellWidth; x++) {
-                if (this.cellArray[x][y][1] instanceof Cell) {
-                    let lifeCell = this.cellArray[x][y][1];
+                let lifeCell = this.cellArray[x][y][1];
+                if (lifeCell instanceof Cell) {
                     this.giveEnergy(lifeCell);
 
                     this.serveSeeds(lifeCell);
 
-                    this.cleanCell(x, y);
+                    this.cleanCell(lifeCell);
                 }
             }
         }
@@ -180,8 +180,7 @@ export class GridDrive {
         }
     }
 
-    cleanCell(x, y) {
-        let cell = this.cellArray[x][y][1]
+    cleanCell(cell) {
         if (cell instanceof Cell && !cell.getTree) {
             cell.remove()
         }
