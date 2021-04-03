@@ -15,6 +15,7 @@ export class GridDrive {
         this.cellWidth = width / cellSize;
 
         this.cellSize = cellSize;
+        this.treeFactory = new TreeFactory();
     }
 
     initEmpty() {
@@ -118,7 +119,7 @@ export class GridDrive {
     }
 
     serveSeeds(lifeCell) {
-        if (lifeCell.getType() === CellType.Seed && !lifeCell.getTree().isAlive()) {
+        if (lifeCell.getType() === CellType.Seed && lifeCell.released) {
             if (lifeCell.y === 0) {
                 if (Math.floor(Math.random() * 5) === 1) {
                     lifeCell.remove();
@@ -132,7 +133,7 @@ export class GridDrive {
                     this.cellArray[lifeCell.x][lifeCell.y][1] = "empty";
                     this.drawCell(this.cellArray[lifeCell.x][lifeCell.y][0], window.simConfig.backColor);
 
-                    let tree = new TreeFactory().createTreeFromSeed(lifeCell, this)
+                    let tree =  this.treeFactory.createTreeFromSeed(lifeCell, this)
                     this.envDrive.addTree(tree);
                     lifeCell.x = -5
                     lifeCell.y = -5

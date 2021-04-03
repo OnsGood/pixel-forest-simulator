@@ -1,17 +1,30 @@
 import { CellType } from "../cells/CellType.js";
 
 export class Tree {
+    // массив с клетками дерева
     cells = [];
     energy;
+
+    // жизнь - расходуется за каждый ход, добывается исполнением гена
     life = window.simConfig.startTreeLife;
+
+    // ограничение максимального числа клеток
     maxCells = window.simConfig.maxCells;
 
     constructor(startCell, geneFactory, energy, generation) {
-        this.id = Date.now();
+        //this.id = Date.now();
         this.addCell(startCell)
+
+        // показатель жизни
         this.alive = true
+
+        // фабрика генов
         this.geneFactory = geneFactory
+
+        //энергия дерева. Расходуется с клеток, майнится зелеными клетками из среды
         this.energy = energy;
+
+        //поколение дерева
         this.generation = generation;
     }
 
@@ -24,13 +37,13 @@ export class Tree {
     }
 
     addLife(count) {
-        if (this.life < 500) {
+        if (this.life < simConfig.treeMaxLife) {
             this.life = this.life + count;
         }
     }
 
     addEnergy(count) {
-        if (this.energy < 50000) {
+        if (this.energy < simConfig.treeMaxEnergy) {
             this.energy = this.energy + count;
         }
     }
@@ -46,6 +59,7 @@ export class Tree {
         }
     }
 
+    // дерево теряет энергию и жизнь, исполняет гены. запускать для каждого в шаг симуляции
     growthCycle() {
         this.life--;
 
@@ -74,32 +88,41 @@ export class Tree {
     }
 
     killTree() {
-        this.alive = false;
-        let seedCount = 0;
-        if (this.cells) {
-            this.cells.forEach((cell) => {
-                if (cell && cell.isAlive()) {
-                    if (cell.getType() != CellType.Usual) {
-                        seedCount++;
+        if (this.alive) {
+            this.alive = false;
+            let seedCount = 0;
+            if (this.cells) {
+                this.cells.forEach((cell) => {
+                    if (cell && cell.isAlive()) {
+                        if (cell.getType() != CellType.Usual) {
+                            seedCount++;
+                        }
                     }
-                }
-            })
+                })
 
-            this.cells.forEach((cell) => {
-                if (cell && cell.isAlive()) {
+                this.cells.forEach((cell) => {
+                    if (cell && cell.isAlive()) {
 
-                    if (cell.getType() === CellType.Usual) {
-                        cell.remove();
-                    } else {
-                        cell.setType(CellType.Seed);
-                        cell.geneArray = this.geneArray;
-                        cell.generation = this.generation;
-                        cell.energy = ((this.energy + 1) / seedCount) + window.simConfig.startSeedEnergySum;
+                        if (cell.getType() === CellType.Usual) {
+                            cell.remove();
+                        } else {
+                            if (!cell.released) {
+                                this.releaseCell(cell);
+                                cell.energy = ((this.energy + 1) / seedCount) + window.simConfig.startSeedEnergySum;
+                            }
+                        }
+
                     }
-
-                }
-            })
+                })
+            }
         }
+    }
+
+    releaseCell(cell) {
+        cell.setType(CellType.Seed);
+        cell.geneArray = this.geneArray;
+        cell.generation = this.generation;
+        cell.released = true;
     }
 
     removeCell(cell) {

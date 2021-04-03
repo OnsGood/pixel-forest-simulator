@@ -4,12 +4,13 @@ export class SimConfig {
     energyFactor = 25
     maxHeighSteps = 15
     maxEnergy = 70
-    
+    treeMaxEnergy = 50000
     startSeedEnergy = 200
     startSeedEnergySum = 50
 
     //life options
     startTreeLife = 50
+    treeMaxLife = 500
 
     maxCells = 1000
 

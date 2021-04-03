@@ -15,6 +15,7 @@ export class Cell {
         this.startPoint = startPoint
         this.gridDrive.addCell(this)
         this.tenergy = 0;
+        this.released = false;
     }
 
     isAlive() {
