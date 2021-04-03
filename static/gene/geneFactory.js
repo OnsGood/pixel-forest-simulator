@@ -7,7 +7,7 @@ export class GeneFactory {
     maxValueInGene = 50;
     mutationChance = 25;
 
-    maxDopDataInGene = 500;
+    maxDopDataInGene = 2000;
     dopDataPos = 4;
 
     maxDopBehInGene = 4;
@@ -23,11 +23,6 @@ export class GeneFactory {
     //    2
     // значения числа в гене -
     // 0 to (CG-1)          = generational genes, создает клетку, с стартовой точкой = CG
-    // CG                   = make cell seed 
-    // CG + 1               = make cell usual
-    // CG + 2               = +- x life to tree
-    // CG + 3               = kill cell
-    // CG + 3               = release seed
 
     runGene(cell, geneArray, gridDrive) {
         let gene = geneArray[cell.startPoint]
@@ -44,13 +39,15 @@ export class GeneFactory {
             } else if (behavior === (this.countOfGenes + 1)) {
                 this.chooseBeh(dopBeh, dopData, cell, this.changeCellType.bind(this), cell, CellType.Usual)
             } else if (behavior === (this.countOfGenes + 2)) {
-                this.chooseBeh(dopBeh, dopData, cell, this.addLifeToTree.bind(this), cell.getTree(), gene[4])
+                this.chooseBeh(dopBeh, dopData, cell, this.changeCellType.bind(this), cell, CellType.Structural)
             } else if (behavior === (this.countOfGenes + 3)) {
                 this.chooseBeh(dopBeh, dopData, cell, this.killCell.bind(this), cell)
                 break;
             } else if (behavior === (this.countOfGenes + 4)) {
                 this.chooseBeh(dopBeh, dopData, cell, this.releaseSeed.bind(this), cell, gene[4])
                 break;
+            } else if (behavior === (this.countOfGenes + 5)) {
+                this.chooseBeh(dopBeh, dopData, cell, this.addLifeToTree.bind(this), cell.getTree(), gene[4])
             }
         }
     }
@@ -111,15 +108,15 @@ export class GeneFactory {
                 callback(...args);
                 break;
             case 1:
-                if (cell.tree.cells.length > dopData)
+                if (cell.tree.cells.length < dopData)
                     callback(...args);
                 break;
             case 2:
-                if (cell.tree.life > dopData)
+                if (cell.tree.life < dopData)
                     callback(...args);
                 break;
             case 3:
-                if (cell.y > dopData)
+                if (cell.y < dopData)
                     callback(...args);
                 break;
         }

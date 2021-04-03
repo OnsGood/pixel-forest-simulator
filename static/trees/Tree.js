@@ -1,4 +1,4 @@
-import { CellType } from "../cells/CellType.js";
+import { CellType, Seedeable } from "../cells/CellType.js";
 
 export class Tree {
     // массив с клетками дерева
@@ -59,7 +59,7 @@ export class Tree {
         }
     }
 
-    // дерево теряет энергию и жизнь, исполняет гены. запускать для каждого в шаг симуляции
+    // дерево теряет энергию и жизнь, исполняет гены. запускать для каждого дерева в шаг симуляции
     growthCycle() {
         this.life--;
 
@@ -68,7 +68,7 @@ export class Tree {
                 this.cells.forEach((cell) => {
 
                     if (cell && cell.isAlive()) {
-                        this.energy = this.energy - 10;
+                        this.energy = this.energy - cell.getType().energyConsuming;
                         if (cell.getType() === CellType.Active) {
 
                             this.geneFactory.runGene(cell, this.geneArray, cell.gridDrive)
@@ -94,24 +94,23 @@ export class Tree {
             if (this.cells) {
                 this.cells.forEach((cell) => {
                     if (cell && cell.isAlive()) {
-                        if (cell.getType() != CellType.Usual) {
+                        if (cell.getType() == CellType.Active || cell.getType() == CellType.Seed) {
                             seedCount++;
                         }
                     }
                 })
+                let seedsEnergy = (((this.energy + 1) / window.simConfig.divideSeedEnergyCoef) / seedCount) + window.simConfig.startSeedEnergySum;
 
                 this.cells.forEach((cell) => {
                     if (cell && cell.isAlive()) {
-
-                        if (cell.getType() === CellType.Usual) {
-                            cell.remove();
-                        } else {
+                        if (Seedeable(cell)) {
                             if (!cell.released) {
                                 this.releaseCell(cell);
-                                cell.energy = ((this.energy + 1) / seedCount) + window.simConfig.startSeedEnergySum;
+                                cell.energy = seedsEnergy;
                             }
+                        } else {
+                            cell.remove();
                         }
-
                     }
                 })
             }
