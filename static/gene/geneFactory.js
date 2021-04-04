@@ -126,10 +126,11 @@ export class GeneFactory {
 
     addLifeToTree(tree, value) {
         //console.log(value)
-        if (value > 15)
-            value = 15
-        else if (value < -15)
-            value = -15
+        let max = 20
+        if (value > max)
+            value = max
+        else if (value < -max)
+            value = -max
         tree.addLife(value);
     }
 

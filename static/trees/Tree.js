@@ -11,6 +11,9 @@ export class Tree {
     // ограничение максимального числа клеток
     maxCells = window.simConfig.maxCells;
 
+    // ограничение максимального количества энергии
+    maxEnergy = simConfig.treeStartMaxEnergy;
+
     constructor(startCell, geneFactory, energy, generation) {
         //this.id = Date.now();
         this.addCell(startCell)
@@ -43,9 +46,13 @@ export class Tree {
     }
 
     addEnergy(count) {
-        if (this.energy < simConfig.treeMaxEnergy) {
+        if (this.energy < this.maxEnergy) {
             this.energy = this.energy + count;
         }
+    }
+
+    addMaxEnergy(count) {
+        this.maxEnergy = this.maxEnergy + count;
     }
 
     getCells() {

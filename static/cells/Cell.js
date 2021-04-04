@@ -1,5 +1,7 @@
 'use strict'
 
+import { CellType } from "./CellType.js";
+
 export class Cell {
     x = 0;
     y = 0;
@@ -43,10 +45,14 @@ export class Cell {
 
     setType(type) {
         if (this.alive) {
+            if(this.type != type && type === CellType.Structural){
+                this.tree.addMaxEnergy(CellType.Structural.maxEnergyPlus);
+            }
             this.type = type
             this.gridDrive.changeCellColor(this);
         }
     }
+
 
     move(newX, newY) {
         if (this.alive) {
